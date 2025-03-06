@@ -8,43 +8,44 @@ import {
   updateToiletRoute,
   deleteToiletRoute
 } from "./openapi";
+import { successResponse, errorResponse } from '../../utils/response';
 
 export const ToiletsRoutes = new OpenAPIHono<Env>();
 
-ToiletsRoutes.openapi(listToiletsRoute, async (c) => {
-  const service = new ToiletsService(c.get('db'));
+ToiletsRoutes.openapi(listToiletsRoute, async (ctx) => {
+  const service = new ToiletsService(ctx.get('db'));
   const toilets = await service.findAll();
-  return c.json({ success: true, data: toilets });
+  return ctx.json(successResponse(toilets));
 });
 
-ToiletsRoutes.openapi(getToiletRoute, async (c) => {
-  const service = new ToiletsService(c.get('db'));
-  const { id } = c.req.valid('param');
+ToiletsRoutes.openapi(getToiletRoute, async (ctx) => {
+  const service = new ToiletsService(ctx.get('db'));
+  const { id } = ctx.req.valid('param');
   const toilet = await service.findById(id);
   if (!toilet) {
-    return c.json({ success: false, message: "Toilet not found" }, 404);
+    return ctx.json(errorResponse("Toilet not found"));
   }
-  return c.json({ success: true, data: toilet });
+  return ctx.json(successResponse(toilet));
 });
 
-ToiletsRoutes.openapi(createToiletRoute, async (c) => {
-  const service = new ToiletsService(c.get('db'));
-  const data = c.req.valid('json');
+ToiletsRoutes.openapi(createToiletRoute, async (ctx) => {
+  const service = new ToiletsService(ctx.get('db'));
+  const data = ctx.req.valid('json');
   await service.create(data);
-  return c.json({ success: true, message: "Toilet created successfully" }, 201);
+  return ctx.json(successResponse("Toilet created successfully"));
 });
 
-ToiletsRoutes.openapi(updateToiletRoute, async (c) => {
-  const service = new ToiletsService(c.get('db'));
-  const { id } = c.req.valid('param');
-  const data = c.req.valid('json');
+ToiletsRoutes.openapi(updateToiletRoute, async (ctx) => {
+  const service = new ToiletsService(ctx.get('db'));
+  const { id } = ctx.req.valid('param');
+  const data = ctx.req.valid('json');
   await service.update(id, data);
-  return c.json({ success: true, message: "Toilet updated successfully" });
+  return ctx.json(successResponse("Toilet updated successfully"));
 });
 
-ToiletsRoutes.openapi(deleteToiletRoute, async (c) => {
-  const service = new ToiletsService(c.get('db'));
-  const { id } = c.req.valid('param');
+ToiletsRoutes.openapi(deleteToiletRoute, async (ctx) => {
+  const service = new ToiletsService(ctx.get('db'));
+  const { id } = ctx.req.valid('param');
   await service.delete(id);
-  return c.json({ success: true, message: "Toilet deleted successfully" });
+  return ctx.json(successResponse("Toilet deleted successfully"));
 }); 

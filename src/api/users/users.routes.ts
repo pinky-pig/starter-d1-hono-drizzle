@@ -3,6 +3,7 @@ import { Bindings, Variables } from "../../core/configs/workers";
 import { auth } from "../../core/middlewares/auth.middleware";
 import { ProfileOpenAPI, SigninOpenAPI, SignupOpenAPI } from "./openapi";
 import { UsersService } from "./users.service";
+import { successResponse, errorResponse } from "../../utils/response";
 
 const routes = new OpenAPIHono<{
   Bindings: Bindings;
@@ -22,11 +23,11 @@ routes.openapi(SignupOpenAPI, async (ctx) => {
   const userExists = await ctx.var.usersService.emailExists(email);
 
   if (userExists) {
-    return ctx.json({ message: "Email already in use" }, 400);
+    return ctx.json(errorResponse("Email already in use"), 400);
   }
 
   const id = await ctx.var.usersService.signUp({ email, password });
-  return ctx.json({ id });
+  return ctx.json(successResponse({ id }));
 });
 //#endregion
 //#region Sign in
@@ -41,7 +42,7 @@ routes.openapi(SigninOpenAPI, async (ctx) => {
 
     return ctx.json({ token });
   } catch (err: any) {
-    return ctx.json({ message: err.message }, 400);
+    return ctx.json(errorResponse(err.message), 400);
   }
 });
 //#endregion
