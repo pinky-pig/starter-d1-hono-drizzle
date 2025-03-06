@@ -3,7 +3,10 @@
     "dev": "wrangler dev src/index.ts --port 3000",
     "deploy": "wrangler deploy --minify src/index.ts",
     "db:generate": "drizzle-kit generate:sqlite",
-    "db:apply": "wrangler d1 migrations apply DB --local"
+    "db:apply": "wrangler d1 migrations apply DB --local",
+    "db:apply-remote": "wrangler d1 migrations apply DB --remote",
+    "db:split-sql": "python3 scripts/split-sql.py",
+    "db:import-sql-remote": "for file in ./data/sql_batches/*.sql; do wrangler d1 execute DB --remote --file=\"$file\" -y; done"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.2.1",
