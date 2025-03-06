@@ -6,7 +6,7 @@
     "db:apply": "wrangler d1 migrations apply DB --local",
     "db:apply-remote": "wrangler d1 migrations apply DB --remote",
     "db:split-sql": "python3 scripts/split-sql.py",
-    "db:import-sql-remote": "for file in ./data/sql_batches/*.sql; do wrangler d1 execute DB --remote --file=\"$file\" -y; done"
+    "db:import-sql-remote": "total=$(ls -1 ./data/sql_batches/*.sql | wc -l) && current=0; for file in ./data/sql_batches/*.sql; do ((current++)); echo \"[$current/$total] Processing $file...\"; while ! wrangler d1 execute DB --remote --file=\"$file\" -y; do echo \"Retrying...\"; sleep 2; done && echo \"✓ Done\"; done && echo \"All $total files processed successfully!\""
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.2.1",

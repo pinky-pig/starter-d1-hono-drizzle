@@ -1,6 +1,6 @@
 import os
 
-def split_sql_file(input_file, output_dir, batch_size=10):
+def split_sql_file(input_file, output_dir, batch_size=20):
     print(f"开始处理SQL文件: {input_file}")
     
     # 确保输出目录存在
